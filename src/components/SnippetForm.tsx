@@ -2,8 +2,10 @@
 
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { Snippet, SnippetFormData, LANGUAGES } from "@/types";
+import { Snippet, SnippetFormData, LANGUAGES, Language } from "@/types";
 import { FormEvent, useState } from "react";
+import { Editor } from "@monaco-editor/react";
+import { getMonacoLanguage } from "@/lib/utils";
 
 interface SnippetFormProps {
   initialData?: Partial<SnippetFormData>;
@@ -20,14 +22,14 @@ export default function SnippetForm({
     initialData?.description ?? ""
   );
   const [language, setLanguage] = useState(initialData?.language ?? "");
-  const [tags, setTags] = useState(initialData?.tags ?? "");
+  const [tag, setTags] = useState(initialData?.tag ?? "");
   const [code, setCode] = useState(initialData?.code ?? "");
 
   // submit form
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, tags, description, code, language });
+    onSubmit({ title, tag, description, code, language });
   };
 
   return (
@@ -68,7 +70,7 @@ export default function SnippetForm({
           id="tag"
           type="text"
           className="w-full border rounded p-2"
-          value={tags}
+          value={tag}
           onChange={(e) => setTags(e.target.value)}
           required
         />
@@ -85,7 +87,9 @@ export default function SnippetForm({
           onChange={(e) =>
             setLanguage(e.target.value as SnippetFormData["language"])
           }
+          value={language}
         >
+          <option value="">Select Language</option>
           {LANGUAGES.map((language) => (
             <option key={language.label} value={language.value}>
               {language.label}
@@ -98,13 +102,27 @@ export default function SnippetForm({
         <label htmlFor="code" className="block text-sm font-medium">
           Code snippet
         </label>
-        <Textarea
-          id="code"
-          rows={6}
-          className="w-full border rounded p-2"
+        <Editor
+          height={"300px"}
+          language={getMonacoLanguage(language as Language)}
           value={code}
-          onChange={(e) => setCode(e.target.value)}
-          required
+          onChange={(value) => setCode(value || "")}
+          theme="vs-dark"
+          options={{
+            minimap: { enabled: false },
+            fontSize: 14,
+            lineNumbers: "on",
+            automaticLayout: true,
+            quickSuggestions: false,
+            suggestOnTriggerCharacters: false,
+            parameterHints: { enabled: false },
+            hover: { enabled: false },
+            renderValidationDecorations: "off",
+            folding: true,
+            autoClosingBrackets: "always",
+            wordWrap: "on",
+            formatOnType: true,
+          }}
         />
       </div>
 
