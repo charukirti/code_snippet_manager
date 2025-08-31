@@ -1,9 +1,13 @@
-export default function Snippet (){
-    return (
-        <>
-            <h1 className="text-2xl text-gray-500 poppins font-bold">Snippet page</h1>
-  );
-        </>
-    )
+import Snippet from "@/components/Snippet";
+
+export default async function SnippetPage ({params}: {params: Promise<{id: string}>}){
+  const {id} = await params
+  return (
+    <>
+     <main className="max-w-3xl mx-auto">
+      <Snippet id={id} />
+    </main>
+    </>
+  )
 }
 
