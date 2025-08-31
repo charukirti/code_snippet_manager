@@ -40,10 +40,7 @@ export const snippetStorage = {
       description: formData.description,
       language: formData.language,
       code: formData.code,
-      tags: formData.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean),
+      tag: formData.tag,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -104,7 +101,7 @@ export const snippetStorage = {
       const matchesTags =
         !tags ||
         tags.length === 0 ||
-        tags.some((tag) => snippet.tags.includes(tag));
+        tags.some((tag) => snippet.tag.includes(tag));
 
       return matchesQuery && matchesLanguage && matchesTags;
     });
