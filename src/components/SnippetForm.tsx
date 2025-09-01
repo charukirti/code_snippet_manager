@@ -122,6 +122,7 @@ export default function SnippetForm({
             autoClosingBrackets: "always",
             wordWrap: "on",
             formatOnType: true,
+            contextmenu: false
           }}
         />
       </div>
