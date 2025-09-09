@@ -85,7 +85,7 @@ export const snippetStorage = {
     return snippets.find((s) => s.id === id) || null;
   },
 
-  search(query: string, language?: string, tags?: string[]): Snippet[] {
+  search(query: string, language?: string, tag?: string): Snippet[] {
     const snippets = this.getAll();
     const lowerQuery = query.toLowerCase();
 
@@ -98,11 +98,7 @@ export const snippetStorage = {
 
       const matchesLanguage = !language || snippet.language === language;
 
-      const matchesTags =
-        !tags ||
-        tags.length === 0 ||
-        tags.some((tag) => snippet.tag.includes(tag));
-
+      const matchesTags = !tag || tag.length === 0 || tag === snippet.tag;
       return matchesQuery && matchesLanguage && matchesTags;
     });
   },
