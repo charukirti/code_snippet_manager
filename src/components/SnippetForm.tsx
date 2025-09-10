@@ -2,137 +2,201 @@
 
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { Snippet, SnippetFormData, LANGUAGES, Language } from "@/types";
+import { SnippetFormData, LANGUAGES, Language } from "@/types";
 import { FormEvent, useState } from "react";
 import { Editor } from "@monaco-editor/react";
 import { getMonacoLanguage } from "@/lib/utils";
+import { FormHeader } from "@/components/forms/FormHeader";
+import { FormField } from "@/components/ui/FormField";
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { FormActions } from "@/components/forms/FormActions";
 
 interface SnippetFormProps {
   initialData?: Partial<SnippetFormData>;
   onSubmit: (data: SnippetFormData) => void;
+  isSubmitting?: boolean;
 }
 
 export default function SnippetForm({
   initialData,
   onSubmit,
+  isSubmitting = false,
 }: SnippetFormProps) {
-  /* States */
-  const [title, setTitle] = useState(initialData?.title ?? "");
-  const [description, setDescription] = useState(
-    initialData?.description ?? ""
-  );
-  const [language, setLanguage] = useState(initialData?.language ?? "");
-  const [tag, setTags] = useState(initialData?.tag ?? "");
-  const [code, setCode] = useState(initialData?.code ?? "");
+  const [formData, setFormData] = useState({
+    title: initialData?.title ?? "",
+    description: initialData?.description ?? "",
+    language: initialData?.language ?? "",
+    tag: initialData?.tag ?? "",
+    code: initialData?.code ?? "",
+  });
 
-  // submit form
+  const { errors, validateForm, clearFieldError, clearAllErrors } =
+    useFormValidation();
+
+  const updateField = <K extends keyof SnippetFormData>(
+    field: K,
+    value: SnippetFormData[K]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    clearFieldError(field);
+  };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, tag, description, code, language });
+
+    if (validateForm(formData)) {
+      const trimmedData = {
+        ...formData,
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        tag: formData.tag.trim(),
+        code: formData.code.trim(),
+      };
+      onSubmit(trimmedData);
+    }
   };
 
+  const handleClear = () => {
+    setFormData({
+      title: "",
+      description: "",
+      language: "",
+      tag: "",
+      code: "",
+    });
+    clearAllErrors();
+  };
+
+  const getFieldClassName = (field: keyof SnippetFormData, baseClass: string) =>
+    `${baseClass} ${
+      errors[field]
+        ? "border-red-500 focus:border-red-500"
+        : "border-gray-300 focus:border-blue-500"
+    }`;
+
   return (
-    <form className="space-y-4 max-w-2xl mx-auto" onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium">
-          Title
-        </label>
-        <Input
-          id="title"
-          type="text"
-          className="w-full border rounded p-2"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </div>
+    <main className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm">
+      <FormHeader
+        title={initialData?.title ? "Edit Snippet" : "Create New Snippet"}
+        description="Fill in the details below to save your code snippet"
+      />
 
-      <div>
-        <label htmlFor="description" className="block text-sm font-medium">
-          Description
-        </label>
-        <Textarea
-          id="description"
-          rows={5}
-          className="w-full border rounded p-2"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <FormField label="Title" error={errors.title} required>
+          <Input
+            type="text"
+            className={getFieldClassName(
+              "title",
+              "w-full border rounded-lg p-3 transition-colors"
+            )}
+            value={formData.title}
+            onChange={(e) => updateField("title", e.target.value)}
+            placeholder="Enter a descriptive title for your snippet"
+            required
+          />
+        </FormField>
 
-      <div>
-        <label htmlFor="tag" className="block text-sm font-medium">
-          Tags
-        </label>
-        <Input
-          id="tag"
-          type="text"
-          className="w-full border rounded p-2"
-          value={tag}
-          onChange={(e) => setTags(e.target.value)}
-          required
-        />
-      </div>
+        <FormField label="Description" error={errors.description} required>
+          <Textarea
+            rows={4}
+            className={getFieldClassName(
+              "description",
+              "w-full border rounded-lg p-3 transition-colors resize-vertical"
+            )}
+            value={formData.description}
+            onChange={(e) => updateField("description", e.target.value)}
+            placeholder="Describe what this code snippet does and how to use it"
+            required
+          />
+        </FormField>
 
-      <div>
-        <label htmlFor="language" className="block text-sm font-medium">
-          Language
-        </label>
-        <select
-          name="languages"
-          id="language"
-          className="w-full border rounded p-2"
-          onChange={(e) =>
-            setLanguage(e.target.value as SnippetFormData["language"])
-          }
-          value={language}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField
+            label="Tag"
+            error={errors.tag}
+            hint="Separate multiple tags with commas"
+            required
+          >
+            <Input
+              type="text"
+              className={getFieldClassName(
+                "tag",
+                "w-full border rounded-lg p-3 transition-colors"
+              )}
+              value={formData.tag}
+              onChange={(e) => updateField("tag", e.target.value)}
+              placeholder="e.g., react, utility, hooks"
+              required
+            />
+          </FormField>
+
+          <FormField label="Language" error={errors.language} required>
+            <select
+              className={getFieldClassName(
+                "language",
+                "w-full border rounded-lg p-3 transition-colors bg-white"
+              )}
+              onChange={(e) =>
+                updateField("language", e.target.value as Language)
+              }
+              value={formData.language}
+              required
+            >
+              <option value="">Select Language</option>
+              {LANGUAGES.map((lang) => (
+                <option key={lang.label} value={lang.value}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+          </FormField>
+        </section>
+
+        <FormField
+          label="Code Snippet"
+          error={errors.code}
+          hint="Paste your code snippet above. Syntax highlighting will adjust based on selected language."
+          required
         >
-          <option value="">Select Language</option>
-          {LANGUAGES.map((language) => (
-            <option key={language.label} value={language.value}>
-              {language.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <section
+            className={`border-2 rounded-lg overflow-hidden transition-colors ${
+              errors.code ? "border-red-500" : "border-gray-300"
+            }`}
+          >
+            <Editor
+              height="500px"
+              language={getMonacoLanguage(formData.language as Language)}
+              value={formData.code}
+              onChange={(value) => updateField("code", value || "")}
+              theme="vs-dark"
+              options={{
+                minimap: { enabled: false },
+                fontSize: 14,
+                lineNumbers: "on",
+                automaticLayout: true,
+                quickSuggestions: false,
+                suggestOnTriggerCharacters: false,
+                parameterHints: { enabled: false },
+                hover: { enabled: false },
+                renderValidationDecorations: "off",
+                folding: true,
+                autoClosingBrackets: "always",
+                wordWrap: "on",
+                formatOnType: true,
+                contextmenu: false,
+                scrollBeyondLastLine: false,
+                padding: { top: 16, bottom: 16 },
+              }}
+            />
+          </section>
+        </FormField>
 
-      <div>
-        <label htmlFor="code" className="block text-sm font-medium">
-          Code snippet
-        </label>
-        <Editor
-          height={"300px"}
-          language={getMonacoLanguage(language as Language)}
-          value={code}
-          onChange={(value) => setCode(value || "")}
-          theme="vs-dark"
-          options={{
-            minimap: { enabled: false },
-            fontSize: 14,
-            lineNumbers: "on",
-            automaticLayout: true,
-            quickSuggestions: false,
-            suggestOnTriggerCharacters: false,
-            parameterHints: { enabled: false },
-            hover: { enabled: false },
-            renderValidationDecorations: "off",
-            folding: true,
-            autoClosingBrackets: "always",
-            wordWrap: "on",
-            formatOnType: true,
-            contextmenu: false
-          }}
+        <FormActions
+          isSubmitting={isSubmitting}
+          submitText={initialData?.title ? "Update Snippet" : "Save Snippet"}
+          onClear={handleClear}
         />
-      </div>
-
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        Save Snippet
-      </button>
-    </form>
+      </form>
+    </main>
   );
 }
