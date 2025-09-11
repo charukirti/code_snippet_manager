@@ -75,7 +75,7 @@ export default function SnippetForm({
     }`;
 
   return (
-    <main className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm">
+    <main className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm mt-4">
       <FormHeader
         title={initialData?.title ? "Edit Snippet" : "Create New Snippet"}
         description="Fill in the details below to save your code snippet"
