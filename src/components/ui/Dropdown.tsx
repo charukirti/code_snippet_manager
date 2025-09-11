@@ -1,5 +1,4 @@
 "use client";
-
 import { ChevronDown } from "lucide-react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
@@ -35,18 +34,15 @@ export function Dropdown({ trigger, children, className }: DropdownProps) {
         setIsOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
       <div onClick={() => setIsOpen(!isOpen)}>{trigger}</div>
-
       {isOpen && (
-        <div className="absolute top-full mt-1 right-0 w-48 bg-white border border-gray-200 rounded-lg z-50">
+        <div className="absolute top-full mt-1 right-0 w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg shadow-lg dark:shadow-slate-900/20 z-50">
           <div className="p-1">{children}</div>
         </div>
       )}
@@ -55,7 +51,6 @@ export function Dropdown({ trigger, children, className }: DropdownProps) {
 }
 
 /* --------------------- Dropdown item component ------------------- */
-
 export function DropdownItem({
   children,
   onClick,
@@ -64,7 +59,7 @@ export function DropdownItem({
 }: DropdownItemProps) {
   return (
     <button
-      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md ${className}`}
+      className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 focus:bg-gray-100 dark:focus:bg-slate-700 rounded-md transition-colors outline-none focus:ring-2 focus:ring-blue-500/20 ${className}`}
       onClick={onClick}
     >
       {icon}
@@ -74,7 +69,6 @@ export function DropdownItem({
 }
 
 /* ------------------ Filter button dropdown --------------------- */
-
 export function FilterButton({
   children,
   isActive = false,
@@ -82,10 +76,10 @@ export function FilterButton({
 }: FilterButtonProps) {
   return (
     <button
-      className={`inline-flex items-center gap-2 px-3 py-2 text-sm border rounded-lg transition-colors ${
+      className={`inline-flex items-center gap-2 px-3 py-2 text-sm border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
         isActive
-          ? "bg-blue-50 border-blue-200 text-blue-700"
-          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
+          ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700/50 text-blue-700 dark:text-blue-300"
+          : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600 text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700"
       }`}
     >
       {icon}

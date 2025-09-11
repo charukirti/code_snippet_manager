@@ -64,15 +64,15 @@ export default function Snippets() {
   };
 
   return (
-    <section className="w-full max-w-7xl mx-auto py-6">
+    <section className="w-full max-w-7xl mx-auto py-6 ">
       {/* Header Section */}
       <div className="mb-6 sm:mb-8">
-        <h2 className="text-xl sm:text-2xl lg:text-3xl text-gray-900 poppins font-bold">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl text-slate-900 dark:text-slate-100 poppins font-bold">
           {filteredSnippets.length === snippets.length
             ? `All snippets (${snippets.length})`
             : `Filtered Results (${filteredSnippets.length} of ${snippets.length})`}
         </h2>
-        <p className="text-gray-600 mt-1 text-sm sm:text-base">
+        <p className="text-slate-600 dark:text-slate-50 mt-1 text-sm sm:text-base">
           Manage and organize your code snippets
         </p>
       </div>
@@ -80,12 +80,12 @@ export default function Snippets() {
       {/* Content Section */}
       {filteredSnippets.length === 0 ? (
         <div className="text-center py-12 sm:py-16">
-          <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">
+          <h3 className="text-lg sm:text-xl font-medium text-slate-900 dark:text-slate-100 mb-2">
             {snippets.length === 0
               ? "No snippets yet"
               : "No matching snippets found"}
           </h3>
-          <p className="text-gray-600 text-sm sm:text-base">
+          <p className="text-slate-600 dark:text-slate-100 text-sm sm:text-base">
             {snippets.length === 0
               ? "Create your first snippet to get started."
               : "Try adjusting your search or filters"}

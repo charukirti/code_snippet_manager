@@ -34,32 +34,32 @@ export default function SnippetCard({
   return (
     <article
       aria-label="snippet-card"
-      className="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow duration-200 space-y-3 sm:space-y-4"
+      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-3 sm:p-4 md:p-6 shadow-sm hover:shadow-md dark:hover:shadow-lg dark:hover:shadow-slate-900/20 transition-shadow duration-200 space-y-3 sm:space-y-4"
     >
       <div className="space-y-2 sm:space-y-3" aria-label="card-header">
-        <div className="flex flex-col   gap-2">
+        <div className="flex flex-col gap-2">
           <Link href={`/snippets/${id}`} className="flex-1 min-w-0 order-1">
-            <h3 className="text-lg sm:text-2xl font-semibold capitalize  hover:text-blue-600 transition-colors">
+            <h3 className="text-lg sm:text-2xl font-semibold capitalize text-gray-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
               {title}
             </h3>
           </Link>
-          <span className="text-gray-500 text-xs sm:text-sm order-2 sm:order-3 sm:whitespace-nowrap">
+          <span className="text-gray-500 dark:text-slate-400 text-xs sm:text-sm order-2 sm:order-3 sm:whitespace-nowrap">
             {formatDate(createdAt)}
           </span>
         </div>
 
-        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-300 text-violet-700 w-fit">
+        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300 w-fit">
           {tag}
         </span>
 
         {description && (
-          <p className="text-gray-400 text-sm sm:text-base line-clamp-2 sm:line-clamp-1">
+          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base line-clamp-2 sm:line-clamp-1">
             {description}
           </p>
         )}
       </div>
 
-      <div className="relative overflow-hidden rounded-lg sm:rounded-xl bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-sm border border-slate-800/50">
+      <div className="relative overflow-hidden rounded-lg sm:rounded-xl bg-slate-900 dark:bg-slate-950 backdrop-blur-sm border border-slate-700 dark:border-slate-800">
         <div className="overflow-x-auto">
           <SyntaxHighlighter
             language={language}
@@ -70,6 +70,7 @@ export default function SnippetCard({
               fontSize: "0.75rem",
               fontFamily: "monospace",
               minWidth: "fit-content",
+              backgroundColor: "transparent",
             }}
             className="sm:text-sm"
           >
@@ -79,27 +80,27 @@ export default function SnippetCard({
       </div>
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mt-4 sm:mt-6">
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-gray-600 w-fit">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 w-fit">
           {language}
         </span>
 
         <div className="flex items-center justify-end gap-1 sm:gap-2">
           <button
-            className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors touch-manipulation"
+            className="p-1.5 sm:p-2 text-gray-400 dark:text-slate-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-md transition-colors touch-manipulation"
             title="Copy code"
             onClick={() => onCopy?.(code)}
           >
             <Copy size={16} className="sm:w-4 sm:h-4" />
           </button>
           <button
-            className="p-1.5 sm:p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors touch-manipulation"
+            className="p-1.5 sm:p-2 text-gray-400 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors touch-manipulation"
             title="Edit snippet"
             onClick={() => onEdit?.(id)}
           >
             <Edit size={16} className="sm:w-4 sm:h-4" />
           </button>
           <button
-            className="p-1.5 sm:p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors touch-manipulation"
+            className="p-1.5 sm:p-2 text-gray-400 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors touch-manipulation"
             title="Delete snippet"
             onClick={() => onDelete?.(id)}
           >

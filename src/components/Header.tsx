@@ -55,14 +55,14 @@ export default function Header() {
   const hasActiveFilters = searchQuery || selectedLanguage || selectedTag;
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-400 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main header row */}
+     
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+      
           <Logo href="/snippets" showTitle={true} />
 
-          {/* Desktop: Search and filters */}
+     
           <div className="hidden lg:flex flex-1 max-w-2xl mx-4 items-center gap-3">
             <SearchInput
               className="flex-1"
@@ -71,7 +71,7 @@ export default function Header() {
               placeholder="Search snippets..."
             />
 
-            {/* Language Filter */}
+         
             <Dropdown
               trigger={
                 <FilterButton
@@ -102,7 +102,7 @@ export default function Header() {
               ))}
             </Dropdown>
 
-            {/* Tag Filter */}
+      
             <Dropdown
               trigger={
                 <FilterButton isActive={!!selectedTag}>
@@ -127,9 +127,9 @@ export default function Header() {
             </Dropdown>
           </div>
 
-          {/* Right side actions */}
+         
           <div className="flex items-center gap-2">
-            {/* New Snippet Button - Hide text on mobile */}
+           
             <Link
               href="/snippets/new"
               className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -138,7 +138,7 @@ export default function Header() {
               <span className="hidden sm:inline">New Snippet</span>
             </Link>
 
-            {/* Desktop User Menu */}
+            
             <div className="hidden sm:block">
               <Dropdown
                 trigger={
@@ -163,7 +163,7 @@ export default function Header() {
               </Dropdown>
             </div>
 
-            {/* Mobile menu button */}
+            
             <button
               className="sm:hidden p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -173,10 +173,10 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Mobile menu */}
+       
         {isMobileMenuOpen && (
           <div className="sm:hidden border-t border-gray-200 py-4 space-y-4">
-            {/* Mobile Search */}
+            
             <SearchInput
               value={searchQuery}
               onChange={(value) => updateFilters("search", value)}
@@ -184,7 +184,7 @@ export default function Header() {
               className="w-full"
             />
 
-            {/* Mobile Filters */}
+           
             <div className="flex gap-2">
               <Dropdown
                 trigger={
@@ -240,7 +240,7 @@ export default function Header() {
               </Dropdown>
             </div>
 
-            {/* Mobile User Menu */}
+            
             <div className="space-y-2 pt-2 border-t border-gray-200">
               <Link
                 href="/snippets?favorites=true"
@@ -272,7 +272,7 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Active filters indicator */}
+        
             {hasActiveFilters && (
               <div className="pt-2 border-t border-gray-200">
                 <div className="flex items-center justify-between">

@@ -70,12 +70,12 @@ export default function SnippetForm({
   const getFieldClassName = (field: keyof SnippetFormData, baseClass: string) =>
     `${baseClass} ${
       errors[field]
-        ? "border-red-500 focus:border-red-500"
-        : "border-gray-300 focus:border-blue-500"
+        ? "border-red-500 dark:border-red-400 focus:border-red-500 dark:focus:border-red-400"
+        : "border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400"
     }`;
 
   return (
-    <main className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-sm mt-4">
+    <main className="max-w-4xl mx-auto p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm dark:shadow-slate-900/20 border border-transparent dark:border-slate-700">
       <FormHeader
         title={initialData?.title ? "Edit Snippet" : "Create New Snippet"}
         description="Fill in the details below to save your code snippet"
@@ -87,7 +87,7 @@ export default function SnippetForm({
             type="text"
             className={getFieldClassName(
               "title",
-              "w-full border rounded-lg p-3 transition-colors"
+              "w-full border rounded-lg p-3 transition-colors bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 placeholder:text-gray-500 dark:placeholder:text-slate-400"
             )}
             value={formData.title}
             onChange={(e) => updateField("title", e.target.value)}
@@ -101,7 +101,7 @@ export default function SnippetForm({
             rows={4}
             className={getFieldClassName(
               "description",
-              "w-full border rounded-lg p-3 transition-colors resize-vertical"
+              "w-full border rounded-lg p-3 transition-colors resize-vertical bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 placeholder:text-gray-500 dark:placeholder:text-slate-400"
             )}
             value={formData.description}
             onChange={(e) => updateField("description", e.target.value)}
@@ -121,7 +121,7 @@ export default function SnippetForm({
               type="text"
               className={getFieldClassName(
                 "tag",
-                "w-full border rounded-lg p-3 transition-colors"
+                "w-full border rounded-lg p-3 transition-colors bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 placeholder:text-gray-500 dark:placeholder:text-slate-400"
               )}
               value={formData.tag}
               onChange={(e) => updateField("tag", e.target.value)}
@@ -134,7 +134,7 @@ export default function SnippetForm({
             <select
               className={getFieldClassName(
                 "language",
-                "w-full border rounded-lg p-3 transition-colors bg-white"
+                "w-full border rounded-lg p-3 transition-colors bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100"
               )}
               onChange={(e) =>
                 updateField("language", e.target.value as Language)
@@ -142,9 +142,15 @@ export default function SnippetForm({
               value={formData.language}
               required
             >
-              <option value="">Select Language</option>
+              <option value="" className="text-gray-500 dark:text-slate-400">
+                Select Language
+              </option>
               {LANGUAGES.map((lang) => (
-                <option key={lang.label} value={lang.value}>
+                <option 
+                  key={lang.label} 
+                  value={lang.value}
+                  className="text-gray-900 dark:text-slate-100"
+                >
                   {lang.label}
                 </option>
               ))}
@@ -160,7 +166,9 @@ export default function SnippetForm({
         >
           <section
             className={`border-2 rounded-lg overflow-hidden transition-colors ${
-              errors.code ? "border-red-500" : "border-gray-300"
+              errors.code 
+                ? "border-red-500 dark:border-red-400" 
+                : "border-gray-300 dark:border-slate-600"
             }`}
           >
             <Editor
@@ -171,7 +179,7 @@ export default function SnippetForm({
               theme="vs-dark"
               options={{
                 minimap: { enabled: false },
-                fontSize: 14,
+                fontSize: 15,
                 lineNumbers: "on",
                 automaticLayout: true,
                 quickSuggestions: false,
