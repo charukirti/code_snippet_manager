@@ -21,10 +21,6 @@ export default function EditSnippet({ id }: EditSnippetProps) {
   };
   return (
     <>
-      <h1 className="text-2xl text-gray-500 poppins font-bold">
-        Edit Snippet page
-      </h1>
-
       <SnippetForm initialData={currentSnippet} onSubmit={handleSubmit} />
     </>
   );
