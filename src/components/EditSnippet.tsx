@@ -6,6 +6,7 @@ interface EditSnippetProps {
 
 import SnippetForm from "@/components/SnippetForm";
 import { snippetStorage } from "@/lib/storage";
+import { SnippetFormData } from "@/types";
 import { useRouter } from "next/navigation";
 
 export default function EditSnippet({ id }: EditSnippetProps) {
@@ -15,7 +16,7 @@ export default function EditSnippet({ id }: EditSnippetProps) {
 
   if (!currentSnippet) return <p>Snippet is not found</p>;
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: Partial<SnippetFormData>) => {
     snippetStorage.update(id, data);
     router.push("/snippets");
   };

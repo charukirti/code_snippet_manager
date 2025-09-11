@@ -1,5 +1,6 @@
 import NewSnippet from "@/components/NewSnippet";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Code Snippets | Add snippet",
@@ -8,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function CreateSnippet() {
   return (
-    <>
+    <Suspense fallback={<p>Loading form...</p>}>
       <NewSnippet />
-    </>
+    </Suspense>
   );
 }

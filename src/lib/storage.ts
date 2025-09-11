@@ -12,7 +12,7 @@ export const snippetStorage = {
 
       const snippets = JSON.parse(data);
       // Convert date strings back to Date objects
-      return snippets.map((snippet: any) => ({
+      return snippets.map((snippet: Snippet) => ({
         ...snippet,
         createdAt: new Date(snippet.createdAt),
         updatedAt: new Date(snippet.updatedAt),
