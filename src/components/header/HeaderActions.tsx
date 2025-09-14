@@ -1,6 +1,7 @@
 "use client";
 
 import { Dropdown, DropdownItem } from "@/components/ui/Dropdown";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Heart, LogOut, Plus, Settings, Trash2, User } from "lucide-react";
 import Link from "next/link";
 
@@ -16,11 +17,14 @@ export default function HeaderActions() {
         <span className="hidden sm:inline">New Snippet</span>
       </Link>
 
+      {/* Theme Toggle */}
+      <ThemeToggle />
+
       {/* User Menu - Hidden on mobile */}
       <div className="hidden sm:block">
         <Dropdown
           trigger={
-            <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors">
+            <button className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 rounded-lg transition-colors">
               <User className="w-5 h-5" />
             </button>
           }
@@ -31,7 +35,7 @@ export default function HeaderActions() {
           <DropdownItem icon={<Trash2 className="w-4 h-4" />}>
             <Link href="/snippets/trash">Trash</Link>
           </DropdownItem>
-          <div className="border-t border-gray-100 my-1" />
+          <div className="border-t border-gray-100 dark:border-gray-600 my-1" />
           <DropdownItem icon={<Settings className="w-4 h-4" />}>
             <Link href="/settings">Settings</Link>
           </DropdownItem>
