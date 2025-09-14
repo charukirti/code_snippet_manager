@@ -1,10 +1,16 @@
 "use client";
-
 import { Dropdown, DropdownItem, FilterButton } from "@/components/ui/Dropdown";
 import { HeaderSearch } from "./index";
 import { Filter, Heart, LogOut, Settings, Trash2 } from "lucide-react";
 import { LANGUAGES } from "@/types";
 import Link from "next/link";
+import {
+  useClerk,
+  useUser,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+} from "@clerk/nextjs";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -33,6 +39,9 @@ export default function MobileMenu({
   onTagChange,
   onClearAllFilters,
 }: MobileMenuProps) {
+  const { signOut } = useClerk();
+  const { user } = useUser();
+
   if (!isOpen) return null;
 
   return (
@@ -105,42 +114,72 @@ export default function MobileMenu({
       </div>
 
       {/* Navigation Links */}
-      <div className="space-y-2 pt-2 border-t border-gray-200">
-        <Link
-          href="/snippets/favorites"
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-          onClick={onClose}
-        >
-          <Heart className="w-4 h-4" />
-          Favorites
-        </Link>
-        <Link
-          href="/snippets/trash"
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-          onClick={onClose}
-        >
-          <Trash2 className="w-4 h-4" />
-          Trash
-        </Link>
-        <Link
-          href="/settings"
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-          onClick={onClose}
-        >
-          <Settings className="w-4 h-4" />
-          Settings
-        </Link>
-        <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-left">
-          <LogOut className="w-4 h-4" />
-          Sign Out
-        </button>
-      </div>
+      <SignedIn>
+        <div className="space-y-2 pt-2 border-t border-gray-200">
+          {/* User info section */}
+          <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-700">
+            <p className="text-sm font-medium text-gray-900 dark:text-white">
+              {user?.fullName || user?.username}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {user?.primaryEmailAddress?.emailAddress}
+            </p>
+          </div>
+
+          <Link
+            href="/snippets/favorites"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+            onClick={onClose}
+          >
+            <Heart className="w-4 h-4" />
+            Favorites
+          </Link>
+          <Link
+            href="/snippets/trash"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+            onClick={onClose}
+          >
+            <Trash2 className="w-4 h-4" />
+            Trash
+          </Link>
+          <Link
+            href="/settings"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+            onClick={onClose}
+          >
+            <Settings className="w-4 h-4" />
+            Settings
+          </Link>
+          <button
+            onClick={() => {
+              signOut({ redirectUrl: "/" });
+              onClose();
+            }}
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-left"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </button>
+        </div>
+      </SignedIn>
+
+      <SignedOut>
+        <div className="pt-2 border-t border-gray-200">
+          <SignInButton mode="modal">
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              Sign In to Save Snippets
+            </button>
+          </SignInButton>
+        </div>
+      </SignedOut>
 
       {/* Clear Filters */}
       {hasActiveFilters && (
         <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500 dark:text-gray-400">Active filters</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              Active filters
+            </span>
             <button
               onClick={onClearAllFilters}
               className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
