@@ -45,64 +45,70 @@ export default function MobileMenu({
       />
 
       {/* Filters */}
-      <div className="flex gap-2">
-        <Dropdown
-          trigger={
-            <FilterButton
-              icon={<Filter className="w-4 h-4" />}
-              isActive={!!selectedLanguage}
-            >
-              {selectedLanguage
-                ? LANGUAGES.find((l) => l.value === selectedLanguage)?.label
-                : "Language"}
-            </FilterButton>
-          }
-        >
-          <DropdownItem onClick={() => onLanguageChange("")}>
-            All Languages
-          </DropdownItem>
-          {LANGUAGES.map((lang) => (
-            <DropdownItem
-              className={
-                selectedLanguage === lang.value
-                  ? "bg-blue-100 text-blue-700"
-                  : ""
-              }
-              onClick={() => onLanguageChange(lang.value)}
-              key={lang.value}
-            >
-              {lang.label}
+      <div className="flex gap-4 justify-center">
+        <div className="relative z-50">
+          <Dropdown
+            trigger={
+              <FilterButton
+                icon={<Filter className="w-4 h-4" />}
+                isActive={!!selectedLanguage}
+              >
+                {selectedLanguage
+                  ? LANGUAGES.find((l) => l.value === selectedLanguage)?.label
+                  : "Language"}
+              </FilterButton>
+            }
+          >
+            <DropdownItem onClick={() => onLanguageChange("")}>
+              All Languages
             </DropdownItem>
-          ))}
-        </Dropdown>
+            {LANGUAGES.map((lang) => (
+              <DropdownItem
+                className={
+                  selectedLanguage === lang.value
+                    ? "bg-blue-100 text-blue-700"
+                    : ""
+                }
+                onClick={() => onLanguageChange(lang.value)}
+                key={lang.value}
+              >
+                {lang.label}
+              </DropdownItem>
+            ))}
+          </Dropdown>
+        </div>
 
-        <Dropdown
-          trigger={
-            <FilterButton isActive={!!selectedTag}>
-              {selectedTag || "Tag"}
-            </FilterButton>
-          }
-        >
-          <DropdownItem onClick={() => onTagChange("")}>All Tags</DropdownItem>
-          {availableTags.map((tag) => (
-            <DropdownItem
-              key={tag}
-              onClick={() => onTagChange(tag)}
-              className={
-                selectedTag === tag ? "bg-green-100 text-green-700" : ""
-              }
-            >
-              {tag}
+        <div className="relative z-50">
+          <Dropdown
+            trigger={
+              <FilterButton isActive={!!selectedTag}>
+                {selectedTag || "Tag"}
+              </FilterButton>
+            }
+          >
+            <DropdownItem onClick={() => onTagChange("")}>
+              All Tags
             </DropdownItem>
-          ))}
-        </Dropdown>
+            {availableTags.map((tag) => (
+              <DropdownItem
+                key={tag}
+                onClick={() => onTagChange(tag)}
+                className={
+                  selectedTag === tag ? "bg-green-100 text-green-700" : ""
+                }
+              >
+                {tag}
+              </DropdownItem>
+            ))}
+          </Dropdown>
+        </div>
       </div>
 
       {/* Navigation Links */}
       <div className="space-y-2 pt-2 border-t border-gray-200">
         <Link
-          href="/snippets?favorites=true"
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+          href="/snippets/favorites"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
           onClick={onClose}
         >
           <Heart className="w-4 h-4" />
@@ -110,7 +116,7 @@ export default function MobileMenu({
         </Link>
         <Link
           href="/snippets/trash"
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
           onClick={onClose}
         >
           <Trash2 className="w-4 h-4" />
@@ -118,13 +124,13 @@ export default function MobileMenu({
         </Link>
         <Link
           href="/settings"
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
           onClick={onClose}
         >
           <Settings className="w-4 h-4" />
           Settings
         </Link>
-        <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md">
+        <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md text-left">
           <LogOut className="w-4 h-4" />
           Sign Out
         </button>
@@ -132,12 +138,12 @@ export default function MobileMenu({
 
       {/* Clear Filters */}
       {hasActiveFilters && (
-        <div className="pt-2 border-t border-gray-200">
+        <div className="pt-2 border-t border-gray-200 dark:border-gray-600">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Active filters</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">Active filters</span>
             <button
               onClick={onClearAllFilters}
-              className="text-sm text-blue-600 hover:text-blue-700"
+              className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
             >
               Clear all
             </button>
