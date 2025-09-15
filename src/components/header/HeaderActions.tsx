@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function HeaderActions() {
   return (
     <div className="flex items-center gap-2">
-      {/* Only show New Snippet button when signed in */}
+    
       <SignedIn>
         <Link
           href="/snippets/new"
@@ -19,10 +19,10 @@ export default function HeaderActions() {
         </Link>
       </SignedIn>
 
-      {/* Theme Toggle */}
+   
       <ThemeToggle />
 
-      {/* User Menu with Custom Items */}
+     
      <div className="hidden sm:block">
        <SignedIn>
         <UserButton
@@ -34,12 +34,12 @@ export default function HeaderActions() {
         >
           <UserButton.MenuItems>
             <UserButton.Link
-              label="Favorites"
+              label="Favorites (Comming soon)"
               labelIcon={<Heart className="w-4 h-4" />}
               href="/snippets/favorites"
             />
             <UserButton.Link
-              label="Trash"
+              label="Trash (Comming soon)"
               labelIcon={<Trash2 className="w-4 h-4" />}
               href="/snippets/trash"
             />
