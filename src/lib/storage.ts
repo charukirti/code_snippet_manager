@@ -35,7 +35,8 @@ export const snippetStorage = {
 
   add(formData: SnippetFormData): Snippet {
     const newSnippet: Snippet = {
-      id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+      id: Date.now().toString(36) + Math.random().toString(36).substring(2),
+      userId: formData.userId || '',
       title: formData.title,
       description: formData.description,
       language: formData.language,

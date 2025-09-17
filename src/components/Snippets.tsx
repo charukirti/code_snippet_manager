@@ -1,5 +1,6 @@
 "use client";
 import SnippetCard from "@/components/SnippetCard";
+import { OverlayLoader } from "@/components/ui/OverlayLoader";
 import { snippetStorage } from "@/lib/storage";
 import { copyToClipboard } from "@/lib/utils";
 import { Snippet } from "@/types";
@@ -34,20 +35,7 @@ export default function Snippets() {
   }, [searchQuery, selectedLanguage, selectedTags, isLoading]);
 
   if (!isLoading) {
-    return (
-      <section className="w-full max-w-7xl mx-auto py-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl text-gray-900 poppins font-bold">
-              Loading snippets...
-            </h2>
-            <p className="text-gray-600 mt-1 text-sm sm:text-base">
-              Manage and organize your code snippets
-            </p>
-          </div>
-        </div>
-      </section>
-    );
+    return <OverlayLoader />;
   }
 
   const handleDelete = (id: string) => {

@@ -10,6 +10,7 @@ import { FormHeader } from "@/components/forms/FormHeader";
 import { FormField } from "@/components/ui/FormField";
 import { useFormValidation } from "@/hooks/useFormValidation";
 import { FormActions } from "@/components/forms/FormActions";
+import { useUser } from "@clerk/nextjs";
 
 interface SnippetFormProps {
   initialData?: Partial<SnippetFormData>;
@@ -30,6 +31,8 @@ export default function SnippetForm({
     code: initialData?.code ?? "",
   });
 
+  const { user } = useUser();
+
   const { errors, validateForm, clearFieldError, clearAllErrors } =
     useFormValidation();
 
@@ -47,6 +50,7 @@ export default function SnippetForm({
     if (validateForm(formData)) {
       const trimmedData = {
         ...formData,
+        userId: user?.id,
         title: formData.title.trim(),
         description: formData.description.trim(),
         tag: formData.tag.trim(),
@@ -146,8 +150,8 @@ export default function SnippetForm({
                 Select Language
               </option>
               {LANGUAGES.map((lang) => (
-                <option 
-                  key={lang.label} 
+                <option
+                  key={lang.label}
                   value={lang.value}
                   className="text-gray-900 dark:text-slate-100"
                 >
@@ -166,8 +170,8 @@ export default function SnippetForm({
         >
           <section
             className={`border-2 rounded-lg overflow-hidden transition-colors ${
-              errors.code 
-                ? "border-red-500 dark:border-red-400" 
+              errors.code
+                ? "border-red-500 dark:border-red-400"
                 : "border-gray-300 dark:border-slate-600"
             }`}
           >

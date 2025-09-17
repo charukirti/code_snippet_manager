@@ -3,6 +3,7 @@ export interface Snippet {
   title: string;
   code: string;
   language: string;
+  userId: string;
   tag: string;
   description?: string;
   createdAt: Date;
@@ -15,6 +16,7 @@ export interface SnippetFormData {
   language: string;
   tag: string;
   description?: string;
+  userId?: string;
 }
 
 export type Language =
