@@ -30,14 +30,14 @@ export function ThemeToggle() {
       <DropdownItem
         onClick={() => setTheme("light")}
         icon={<Sun className="w-4 h-4" />}
-        className={theme === "light" ? "bg-blue-100 text-blue-700" : ""}
+        className={`mb-1 ${theme === "light" ? "bg-slate-100 text-blue-700" : ""}`}
       >
         Light
       </DropdownItem>
       <DropdownItem
         onClick={() => setTheme("dark")}
         icon={<Moon className="w-4 h-4" />}
-        className={theme === "dark" ? "bg-blue-100 text-blue-700" : ""}
+        className={theme === "dark" ? "bg-slate-600 text-blue-700" : ""}
       >
         Dark
       </DropdownItem>
