@@ -1,11 +1,13 @@
 "use client";
 
+import NotFound from "@/components/NotFound";
 import { snippetStorage } from "@/lib/storage";
 import { copyToClipboard, formatDate } from "@/lib/utils";
-import { ArrowLeft, Copy, Edit, Trash2 } from "lucide-react";
+import { ArrowLeft, Copy, Edit, Trash2, Download } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -21,41 +23,133 @@ export default function Snippet({ id }: SnippetProps) {
   const snippet = snippetStorage.findById(id);
 
   if (!snippet) {
-    return (
-      <div className="max-w-2xl mx-auto p-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 mb-2">
-          Snippet not found
-        </h1>
-        <p className="text-gray-600 dark:text-slate-300 mb-4">
-          The snippet you are looking for, does not exist!
-        </p>
-
-        <Link
-          href={"/snippets"}
-          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to snippets
-        </Link>
-      </div>
-    );
+    return <NotFound />;
   }
 
+  const handleDownload = () => {
+    try {
+      const getFileExtension = (language: string) => {
+        const extensions: { [key: string]: string } = {
+          javascript: "js",
+          typescript: "ts",
+          python: "py",
+          java: "java",
+          cpp: "cpp",
+          c: "c",
+          html: "html",
+          css: "css",
+          sql: "sql",
+          json: "json",
+          xml: "xml",
+          php: "php",
+          ruby: "rb",
+          go: "go",
+          rust: "rs",
+          kotlin: "kt",
+          swift: "swift",
+        };
+        return extensions[language.toLowerCase()] || "txt";
+      };
+
+      const fileExtension = getFileExtension(snippet.language);
+      const commentChar = [
+        "js",
+        "ts",
+        "java",
+        "cpp",
+        "c",
+        "css",
+        "php",
+        "go",
+        "rust",
+        "kt",
+        "swift",
+      ].includes(fileExtension)
+        ? "//"
+        : "#";
+
+      const fileContent = `${commentChar} ${snippet.title}
+${snippet.description ? `${commentChar} ${snippet.description}` : ""}
+${commentChar} Language: ${snippet.language}
+${commentChar} Tag: ${snippet.tag}
+${commentChar} Created: ${formatDate(snippet.createdAt)}
+
+${snippet.code}`;
+
+      const blob = new Blob([fileContent], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${snippet.title
+        .replace(/[^a-z0-9]/gi, "_")
+        .toLowerCase()}.${fileExtension}`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success(`${snippet.title} downloaded successfully!`, {
+        duration: 3000,
+        icon: "📥",
+      });
+    } catch (error) {
+      toast.error("Failed to download snippet. Please try again.", {
+        duration: 4000,
+        icon: "❌",
+      });
+      console.error("Download error:", error);
+    }
+  };
+
   const handleCopy = async () => {
-    await copyToClipboard(snippet.code);
-    setIsCopied((copied) => !copied);
-    setTimeout(() => setIsCopied(false), 2000);
+    try {
+      await copyToClipboard(snippet.code);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+
+      toast.success("Code copied to clipboard!", {
+        duration: 2000,
+        icon: "📋",
+      });
+    } catch (error) {
+      toast.error("Failed to copy code. Please try again.", {
+        duration: 3000,
+        icon: "❌",
+      });
+      console.error("Copy error:", error);
+    }
   };
 
   const handleDelete = () => {
-    if (confirm("Are you sure, about you action?")) {
-      snippetStorage.delete(id);
-      router.push("/snippets");
+    if (confirm("Are you sure you want to delete this snippet?")) {
+      try {
+        snippetStorage.delete(id);
+        toast.success("Snippet deleted successfully!", {
+          duration: 3000,
+          icon: "🗑️",
+        });
+
+        router.push("/snippets");
+      } catch (error) {
+        toast.error("Failed to delete snippet. Please try again.", {
+          duration: 4000,
+          icon: "❌",
+        });
+        console.error("Delete error:", error);
+      }
     }
   };
 
   const handleEdit = () => {
-    router.push(`/snippets/edit/${id}`);
+    try {
+      router.push(`/snippets/edit/${id}`);
+    } catch (error) {
+      toast.error("Failed to navigate to edit page.", {
+        duration: 3000,
+        icon: "❌",
+      });
+      console.error("Navigation error:", error);
+    }
   };
 
   return (
@@ -125,6 +219,15 @@ export default function Snippet({ id }: SnippetProps) {
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete
+                </button>
+
+                <button
+                  onClick={handleDownload}
+                  className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700/50 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                  title="Download snippet"
+                >
+                  <Download className="w-4 h-4" />
+                  Download
                 </button>
               </aside>
             </div>
