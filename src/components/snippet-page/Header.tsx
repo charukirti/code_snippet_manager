@@ -8,7 +8,7 @@ interface HeaderProps {
   snippet: Snippet;
   handleCopy: () => void;
   handleEdit: () => void;
-  handleDownload: () => void;
+  handleDownload: (snippet:Snippet) => void;
   handleDelete: () => void;
   copied: boolean
 }
@@ -78,7 +78,7 @@ export function Header({
           </button>
 
           <button
-            onClick={handleDownload}
+            onClick={() => handleDownload(snippet)}
             className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700/50 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/20"
             title="Download snippet"
           >

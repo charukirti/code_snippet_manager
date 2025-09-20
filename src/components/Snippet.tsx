@@ -4,7 +4,7 @@ import NotFound from "@/components/NotFound";
 import { Content } from "@/components/snippet-page/Content";
 import { Header } from "@/components/snippet-page/Header";
 import { snippetStorage } from "@/lib/storage";
-import { copyToClipboard, formatDate } from "@/lib/utils";
+import { copyToClipboard, handleDownload } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,81 +24,6 @@ export default function Snippet({ id }: SnippetProps) {
   if (!snippet) {
     return <NotFound />;
   }
-
-  const handleDownload = () => {
-    try {
-      const getFileExtension = (language: string) => {
-        const extensions: { [key: string]: string } = {
-          javascript: "js",
-          typescript: "ts",
-          python: "py",
-          java: "java",
-          cpp: "cpp",
-          c: "c",
-          html: "html",
-          css: "css",
-          sql: "sql",
-          json: "json",
-          xml: "xml",
-          php: "php",
-          ruby: "rb",
-          go: "go",
-          rust: "rs",
-          kotlin: "kt",
-          swift: "swift",
-        };
-        return extensions[language.toLowerCase()] || "txt";
-      };
-
-      const fileExtension = getFileExtension(snippet.language);
-      const commentChar = [
-        "js",
-        "ts",
-        "java",
-        "cpp",
-        "c",
-        "css",
-        "php",
-        "go",
-        "rust",
-        "kt",
-        "swift",
-      ].includes(fileExtension)
-        ? "//"
-        : "#";
-
-      const fileContent = `${commentChar} ${snippet.title}
-${snippet.description ? `${commentChar} ${snippet.description}` : ""}
-${commentChar} Language: ${snippet.language}
-${commentChar} Tag: ${snippet.tag}
-${commentChar} Created: ${formatDate(snippet.createdAt)}
-
-${snippet.code}`;
-
-      const blob = new Blob([fileContent], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${snippet.title
-        .replace(/[^a-z0-9]/gi, "_")
-        .toLowerCase()}.${fileExtension}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      toast.success(`${snippet.title} downloaded successfully!`, {
-        duration: 3000,
-        icon: "📥",
-      });
-    } catch (error) {
-      toast.error("Failed to download snippet. Please try again.", {
-        duration: 4000,
-        icon: "❌",
-      });
-      console.error("Download error:", error);
-    }
-  };
 
   const handleCopy = async () => {
     try {
