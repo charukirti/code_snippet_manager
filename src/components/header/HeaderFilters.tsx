@@ -63,7 +63,7 @@ export default function HeaderFilters({
           <DropdownItem
             key={tag}
             onClick={() => onTagChange(tag)}
-            className={selectedTag === tag ? "bg-green-100 text-green-700" : ""}
+            className={selectedTag === tag ? "bg-blue-700 text-blue-100" : ""}
           >
             {tag}
           </DropdownItem>

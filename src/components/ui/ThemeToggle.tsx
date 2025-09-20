@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 import { Dropdown, DropdownItem } from "./Dropdown";
 
