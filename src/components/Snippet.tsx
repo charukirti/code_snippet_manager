@@ -3,6 +3,8 @@
 import NotFound from "@/components/NotFound";
 import { Content } from "@/components/snippet-page/Content";
 import { Header } from "@/components/snippet-page/Header";
+import { OverlayLoader } from "@/components/ui/OverlayLoader";
+import { useDeleteSnippet, useSnippet } from "@/hooks/useSnippets";
 import { snippetStorage } from "@/lib/storage";
 import { copyToClipboard, handleDownload } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
@@ -19,15 +21,24 @@ export default function Snippet({ id }: SnippetProps) {
   const router = useRouter();
   const [copied, setIsCopied] = useState(false);
 
-  const snippet = snippetStorage.findById(id);
+  const { data, isLoading, isError } = useSnippet(id);
+  const {
+    mutate: deleteSnippet,
+    isPending,
+    isError: deleteError,
+  } = useDeleteSnippet();
 
-  if (!snippet) {
+  if (isLoading) {
+    return <OverlayLoader />;
+  }
+
+  if (isError) {
     return <NotFound />;
   }
 
   const handleCopy = async () => {
     try {
-      await copyToClipboard(snippet.code);
+      await copyToClipboard(data?.code!);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
 
@@ -47,18 +58,10 @@ export default function Snippet({ id }: SnippetProps) {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this snippet?")) {
       try {
-        snippetStorage.delete(id);
-        toast.success("Snippet deleted successfully!", {
-          duration: 3000,
-          icon: "🗑️",
-        });
+        deleteSnippet(data?._id!);
 
         router.push("/snippets");
       } catch (error) {
-        toast.error("Failed to delete snippet. Please try again.", {
-          duration: 4000,
-          icon: "❌",
-        });
         console.error("Delete error:", error);
       }
     }
@@ -91,7 +94,7 @@ export default function Snippet({ id }: SnippetProps) {
 
         <article className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg shadow-sm dark:shadow-slate-900/20 overflow-hidden">
           <Header
-            snippet={snippet}
+            snippet={data!}
             handleCopy={handleCopy}
             handleDelete={handleDelete}
             handleDownload={handleDownload}
@@ -100,7 +103,7 @@ export default function Snippet({ id }: SnippetProps) {
           />
 
           {/* ------------------------ code box ------------------ */}
-          <Content snippet={snippet} />
+          <Content snippet={data!} />
         </article>
       </main>
     </>

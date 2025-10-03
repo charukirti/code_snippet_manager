@@ -1,4 +1,5 @@
-import { Language, Snippet } from "@/types";
+import { Snippet } from "@/lib/api";
+import { Language } from "@/types";
 import toast from "react-hot-toast";
 
 export function formatDate(date: Date): string {
@@ -88,7 +89,7 @@ export const handleDownload = (snippet: Snippet) => {
 ${snippet.description ? `${commentChar} ${snippet.description}` : ""}
 ${commentChar} Language: ${snippet.language}
 ${commentChar} Tag: ${snippet.tag}
-${commentChar} Created: ${formatDate(snippet.createdAt)}
+${commentChar} Created: ${formatDate(new Date(snippet.createdAt!))}
 
 ${snippet.code}`;
 

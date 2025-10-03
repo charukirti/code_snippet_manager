@@ -1,6 +1,7 @@
 'use client'
 
-import { Snippet } from "@/types";
+
+import { Snippet } from "@/lib/api";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 
@@ -13,7 +14,7 @@ export function Content({snippet}:ContentProps) {
     <section className="p-6">
       <div className="relative">
         <SyntaxHighlighter
-          language={snippet.language}
+          language={snippet?.language}
           style={tomorrow}
           customStyle={{
             margin: 0,
@@ -32,12 +33,12 @@ export function Content({snippet}:ContentProps) {
             marginRight: "1rem",
           }}
         >
-          {snippet.code}
+          {snippet?.code}
         </SyntaxHighlighter>
       </div>
 
       <footer className="mt-4 text-sm text-gray-500 dark:text-slate-400 text-center">
-        {snippet.code.split("\n").length} lines • {snippet.code.length}{" "}
+        {snippet?.code.split("\n").length} lines • {snippet?.code.length}{" "}
         characters
       </footer>
     </section>

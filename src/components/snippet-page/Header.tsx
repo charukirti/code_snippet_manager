@@ -1,16 +1,17 @@
-'use client'
+"use client";
 
+import { Snippet } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
-import { Snippet } from "@/types";
+
 import { Copy, Download, Trash2, Edit } from "lucide-react";
 
 interface HeaderProps {
   snippet: Snippet;
   handleCopy: () => void;
   handleEdit: () => void;
-  handleDownload: (snippet:Snippet) => void;
+  handleDownload: (snippet: Snippet) => void;
   handleDelete: () => void;
-  copied: boolean
+  copied: boolean;
 }
 
 export function Header({
@@ -19,8 +20,9 @@ export function Header({
   handleDelete,
   handleDownload,
   handleEdit,
-  copied
+  copied,
 }: HeaderProps) {
+  const created = new Date(snippet.createdAt!)
   return (
     <header className="px-6 py-4 border-b border-gray-200 dark:border-slate-600">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -29,21 +31,22 @@ export function Header({
             {snippet?.title}
           </h1>
 
-          {snippet.description && (
+          {snippet?.description && (
             <p className="text-gray-600 dark:text-slate-300 text-lg">
-              {snippet.description}
+              {snippet?.description}
             </p>
           )}
 
           <div className="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-500 dark:text-slate-400">
-            <time dateTime={formatDate(snippet.createdAt)}>
-              Created on {formatDate(snippet.createdAt)}
+            <time dateTime={created.toISOString()}>
+              Created on {formatDate(created)}
             </time>
+
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
-              {snippet.tag}
+              {snippet?.tag}
             </span>
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-              {snippet.language}
+              {snippet?.language}
             </span>
           </div>
         </div>

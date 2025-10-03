@@ -15,7 +15,7 @@ export interface SnippetFormData {
   code: string;
   language: string;
   tag: string;
-  description?: string;
+  description: string;
   userId?: string;
 }
 
@@ -53,3 +53,6 @@ export const LANGUAGES: { value: Language; label: string }[] = [
   { value: "yaml", label: "YAML" },
   { value: "other", label: "Other" },
 ];
+
+
+export const SNIPPETS_QUERY_KEY = ['snippets'];

@@ -1,46 +1,77 @@
+// components/Snippets.tsx
 "use client";
+
 import SnippetCard from "@/components/SnippetCard";
 import { OverlayLoader } from "@/components/ui/OverlayLoader";
-import { snippetStorage } from "@/lib/storage";
 import { copyToClipboard } from "@/lib/utils";
-import { Snippet } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useSnippets, useDeleteSnippet } from "@/hooks/useSnippets";
 
 export default function Snippets() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [snippets, setSnippets] = useState<Snippet[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  
+  // Replace local storage with API hooks
+  const { data: snippets = [], isLoading, error } = useSnippets();
+  const deleteSnippet = useDeleteSnippet();
 
-  /* get url parameters (filter) */
+  console.log(`created at ${snippets.map(sn => sn.createdAt)}`)
+
+  /* Get URL parameters (filter) */
   const searchQuery = searchParams.get("search") || "";
   const selectedLanguage = searchParams.get("language") || "";
   const selectedTags = searchParams.get("tag") || "";
 
-  useEffect(() => {
-    const data = snippetStorage.getAll();
-    setSnippets(data);
-    setIsLoading(true);
-  }, []);
-
-  /* filter snippets based on url params */
+  /* Filter snippets based on URL params (client-side filtering) */
   const filteredSnippets = useMemo(() => {
-    if (!isLoading) return [];
-    return snippetStorage.search(
-      searchQuery,
-      selectedLanguage || undefined,
-      selectedTags || undefined
-    );
-  }, [searchQuery, selectedLanguage, selectedTags, isLoading]);
+    if (!snippets) return [];
+    
+    return snippets.filter((snippet) => {
+      // Search in title, description, and code
+      const matchesSearch = searchQuery
+        ? snippet.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          snippet.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          snippet.code.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
 
-  if (!isLoading) {
+      // Filter by language
+      const matchesLanguage = selectedLanguage
+        ? snippet.language === selectedLanguage
+        : true;
+
+      // Filter by tag
+      const matchesTag = selectedTags
+        ? snippet.tag.toLowerCase() === selectedTags.toLowerCase()
+        : true;
+
+      return matchesSearch && matchesLanguage && matchesTag;
+    });
+  }, [snippets, searchQuery, selectedLanguage, selectedTags]);
+
+  // Show loading state
+  if (isLoading) {
     return <OverlayLoader />;
   }
 
+  // Show error state
+  if (error) {
+    return (
+      <section className="w-full max-w-7xl mx-auto py-6">
+        <div className="text-center py-12 sm:py-16">
+          <h3 className="text-lg sm:text-xl font-medium text-red-600 mb-2">
+            Error Loading Snippets
+          </h3>
+          <p className="text-slate-600 dark:text-slate-100 text-sm sm:text-base">
+            {error.message}
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   const handleDelete = (id: string) => {
-    snippetStorage.delete(id);
-    setSnippets(snippetStorage.getAll());
+    deleteSnippet.mutate(id);
   };
 
   const handleEdit = (id: string) => {
@@ -80,15 +111,15 @@ export default function Snippets() {
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 md:grid-cols-2  ">
+        <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 md:grid-cols-2">
           {filteredSnippets.map((snippet) => (
             <SnippetCard
-              key={snippet.id}
+              key={snippet._id}  // Changed from snippet.id to snippet._id (MongoDB)
               title={snippet.title}
               language={snippet.language}
               code={snippet.code}
-              createdAt={snippet.createdAt}
-              id={snippet.id}
+              createdAt={new Date(snippet.createdAt!)}
+              id={snippet._id!}  // Changed from snippet.id
               tag={snippet.tag}
               description={snippet.description}
               onCopy={handleCopy}

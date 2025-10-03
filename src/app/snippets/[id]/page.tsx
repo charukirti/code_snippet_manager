@@ -6,6 +6,7 @@ export default async function SnippetPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  console.log(id)
   return (
     <>
       <main className=" px-15 mx-auto">
