@@ -1,30 +1,37 @@
 "use client";
 
 import { Logo } from "@/components/ui/Logo";
-import { HeaderSearch, HeaderFilters, HeaderActions, MobileMenu } from "./index";
+import {
+  HeaderSearch,
+  HeaderFilters,
+  HeaderActions,
+  MobileMenu,
+} from "./index";
 import { Menu, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { snippetStorage } from "@/lib/storage";
+import { useSnippets } from "@/hooks/useSnippets";
 
 export default function Header() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  // const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: snippets = [] } = useSnippets();
 
   const searchQuery = searchParams.get("search") || "";
   const selectedLanguage = searchParams.get("language") || "";
   const selectedTag = searchParams.get("tag") || "";
 
   /* Loads available tags */
-  useEffect(() => {
-    const snippets = snippetStorage.getAll();
+  const availableTags = useMemo(() => {
     const tags = snippets
       .map((snippet) => snippet.tag)
       .filter((tag) => tag && tag.trim() !== "");
-    setAvailableTags([...new Set(tags)].sort());
-  }, []);
+
+      return [...new Set(tags)].sort()
+  }, [snippets]);
 
   /* Update url parameters */
   const updateFilters = (key: string, value: string) => {
@@ -47,7 +54,7 @@ export default function Header() {
 
   const hasActiveFilters = searchQuery || selectedLanguage || selectedTag;
 
-  const activeFilters = Boolean(hasActiveFilters)
+  const activeFilters = Boolean(hasActiveFilters);
 
   return (
     <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-400 sticky top-0 z-50">
@@ -68,7 +75,9 @@ export default function Header() {
               selectedLanguage={selectedLanguage}
               selectedTag={selectedTag}
               availableTags={availableTags}
-              onLanguageChange={(language) => updateFilters("language", language)}
+              onLanguageChange={(language) =>
+                updateFilters("language", language)
+              }
               onTagChange={(tag) => updateFilters("tag", tag)}
             />
           </div>
@@ -82,7 +91,11 @@ export default function Header() {
               className="sm:hidden p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMobileMenuOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>

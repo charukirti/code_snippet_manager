@@ -42,7 +42,7 @@ export default function Snippets() {
 
   
       const matchesTag = selectedTags
-        ? snippet.tag.toLowerCase() === selectedTags.toLowerCase()
+        ? snippet?.tag?.toLowerCase() === selectedTags.toLowerCase()
         : true;
 
       return matchesSearch && matchesLanguage && matchesTag;
