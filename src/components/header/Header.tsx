@@ -9,8 +9,7 @@ import {
 } from "./index";
 import { Menu, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
-import { snippetStorage } from "@/lib/storage";
+import { useMemo, useState } from "react";
 import { useSnippets } from "@/hooks/useSnippets";
 
 export default function Header() {
@@ -30,7 +29,7 @@ export default function Header() {
       .map((snippet) => snippet.tag)
       .filter((tag) => tag && tag.trim() !== "");
 
-      return [...new Set(tags)].sort()
+    return [...new Set(tags)].sort();
   }, [snippets]);
 
   /* Update url parameters */

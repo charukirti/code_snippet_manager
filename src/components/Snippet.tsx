@@ -5,7 +5,6 @@ import { Content } from "@/components/snippet-page/Content";
 import { Header } from "@/components/snippet-page/Header";
 import { OverlayLoader } from "@/components/ui/OverlayLoader";
 import { useDeleteSnippet, useSnippet } from "@/hooks/useSnippets";
-import { snippetStorage } from "@/lib/storage";
 import { copyToClipboard, handleDownload } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -22,23 +21,20 @@ export default function Snippet({ id }: SnippetProps) {
   const [copied, setIsCopied] = useState(false);
 
   const { data, isLoading, isError } = useSnippet(id);
-  const {
-    mutate: deleteSnippet,
-    isPending,
-    isError: deleteError,
-  } = useDeleteSnippet();
+  const { mutate: deleteSnippet } = useDeleteSnippet();
 
   if (isLoading) {
     return <OverlayLoader />;
   }
 
-  if (isError) {
+  // Return early if no data or error
+  if (isError || !data) {
     return <NotFound />;
   }
 
   const handleCopy = async () => {
     try {
-      await copyToClipboard(data?.code!);
+      await copyToClipboard(data.code);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
 
@@ -58,8 +54,7 @@ export default function Snippet({ id }: SnippetProps) {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this snippet?")) {
       try {
-        deleteSnippet(data?._id!);
-
+        deleteSnippet(data._id!);
         router.push("/snippets");
       } catch (error) {
         console.error("Delete error:", error);
@@ -94,7 +89,7 @@ export default function Snippet({ id }: SnippetProps) {
 
         <article className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg shadow-sm dark:shadow-slate-900/20 overflow-hidden">
           <Header
-            snippet={data!}
+            snippet={data}
             handleCopy={handleCopy}
             handleDelete={handleDelete}
             handleDownload={handleDownload}
@@ -103,7 +98,7 @@ export default function Snippet({ id }: SnippetProps) {
           />
 
           {/* ------------------------ code box ------------------ */}
-          <Content snippet={data!} />
+          <Content snippet={data} />
         </article>
       </main>
     </>
