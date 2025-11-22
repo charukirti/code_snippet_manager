@@ -1,6 +1,0 @@
-@import "tailwindcss";
-
-@custom-variant dark (&:is(.dark *));
-.poppins {
-  font-family: var(--font-poppins);
-}
