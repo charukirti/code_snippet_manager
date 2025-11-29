@@ -1,17 +1,17 @@
-import { apiClient, Snippet } from "@/lib/api";
-import { SNIPPETS_QUERY_KEY } from "@/types";
+import { apiClient, QueryParams, Snippet } from "@/lib/api";
+import { FAVOURITES_QUERY_KEY, SNIPPETS_QUERY_KEY } from "@/types";
 import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 // fetch all snippets
-export function useSnippets() {
+export function useSnippets(params?: QueryParams) {
   const { getToken } = useAuth();
   return useQuery({
-    queryKey: SNIPPETS_QUERY_KEY,
+    queryKey: [...SNIPPETS_QUERY_KEY, params],
     queryFn: async () => {
       const token = await getToken();
-      const response = await apiClient.getAllSnippets(token);
+      const response = await apiClient.getAllSnippets(token, params);
       return response.data;
     },
   });
@@ -48,6 +48,7 @@ export function useCreateSnippet() {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: SNIPPETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FAVOURITES_QUERY_KEY });
       toast.success(response.message || "Snippet created successfully");
     },
     onError: (error: Error) => {
@@ -74,6 +75,7 @@ export function useUpdateSnippet() {
     },
     onSuccess: (response, variables) => {
       queryClient.invalidateQueries({ queryKey: SNIPPETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FAVOURITES_QUERY_KEY });
       queryClient.invalidateQueries({
         queryKey: [...SNIPPETS_QUERY_KEY, variables.id],
       });
@@ -81,6 +83,77 @@ export function useUpdateSnippet() {
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to update snippet");
+    },
+  });
+}
+
+// Toggle favourites
+
+export function useToggleFavorite() {
+  const queryClient = useQueryClient();
+  const { getToken } = useAuth();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const token = await getToken();
+      return apiClient.toggleFavourite(token, id);
+    },
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: SNIPPETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FAVOURITES_QUERY_KEY }),
+        toast.success(response.message || "Favorite status updated");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update favorite");
+    },
+  });
+}
+
+// Get favorites
+export function useFavourites(params?: QueryParams) {
+  const { getToken } = useAuth();
+
+  return useQuery({
+    queryKey: [...FAVOURITES_QUERY_KEY, params],
+    queryFn: async () => {
+      const token = await getToken();
+      const response = await apiClient.getFavourites(token, params);
+      return response;
+    },
+  });
+}
+
+// Export snippets
+export function useExportSnippets() {
+  const { getToken } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({
+      snippetIds,
+      format = "json",
+    }: {
+      snippetIds: string[];
+      format?: string;
+    }) => {
+      const token = await getToken();
+      const blob = await apiClient.exportSnippets(token, snippetIds, format);
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `snippets-export-${
+        new Date().toISOString().split("T")[0]
+      }.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    },
+    onSuccess: () => {
+      toast.success("Snippets exported successfully");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to export snippets");
     },
   });
 }
@@ -97,6 +170,7 @@ export function useDeleteSnippet() {
     },
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: SNIPPETS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: FAVOURITES_QUERY_KEY });
       toast.success(response.message || "Snippet deleted successfully");
     },
     onError: (error: Error) => {

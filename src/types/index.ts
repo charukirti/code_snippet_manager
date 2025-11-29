@@ -6,6 +6,8 @@ export interface Snippet {
   userId: string;
   tag: string;
   description?: string;
+  isFavourite?: boolean;
+  favouritedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -54,5 +56,8 @@ export const LANGUAGES: { value: Language; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-
 export const SNIPPETS_QUERY_KEY = ['snippets'];
+export const FAVOURITES_QUERY_KEY = ['favourites'];
+
+export type SortOption = 'createdAt' | 'updatedAt' | 'title' | 'language';
+export type SortOrder = 'asc' | 'desc';
